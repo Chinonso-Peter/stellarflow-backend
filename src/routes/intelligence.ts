@@ -56,4 +56,45 @@ router.get("/price-change/:currency", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/intelligence/stale:
+ *   get:
+ *     tags:
+ *       - Intelligence
+ *     summary: Get a list of stale currencies
+ *     description: Identify currencies that haven't been updated in the database for over 30 minutes
+ *     responses:
+ *       '200':
+ *         description: Successfully retrieved stale currencies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 staleCurrencies:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       '500':
+ *         description: Internal server error
+ */
+router.get("/stale", async (req, res) => {
+  try {
+    const staleCurrencies = await intelligenceService.getStaleCurrencies();
+    
+    res.json({
+      success: true,
+      staleCurrencies,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+});
+
 export default router;

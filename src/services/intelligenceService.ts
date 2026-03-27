@@ -63,6 +63,45 @@ export class IntelligenceService {
       return "0.0%";
     }
   }
+
+  /**
+   * Identifies currencies that haven't been updated in the database for over 30 minutes.
+   * 
+   * @returns A list of currency codes that are "Out of Date"
+   */
+  async getStaleCurrencies(): Promise<string[]> {
+    const STALE_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
+    const now = new Date();
+    const staleTime = new Date(now.getTime() - STALE_THRESHOLD_MS);
+
+    try {
+      // Fetch active currencies and their latest price history entry
+      const currenciesWithLatestUpdate = await prisma.currency.findMany({
+        where: { isActive: true },
+        include: {
+          priceHistory: {
+            orderBy: { updatedAt: "desc" },
+            take: 1,
+          },
+        },
+      });
+
+      const staleCurrencies: string[] = [];
+      for (const c of currenciesWithLatestUpdate) {
+        const hasNoHistory = c.priceHistory.length === 0;
+        const isOld = !hasNoHistory && new Date(c.priceHistory[0].updatedAt) < staleTime;
+        
+        if (hasNoHistory || isOld) {
+          staleCurrencies.push(c.code);
+        }
+      }
+
+      return staleCurrencies;
+    } catch (error) {
+      console.error("Error detecting stale currencies:", error);
+      return [];
+    }
+  }
 }
 
 export const intelligenceService = new IntelligenceService();
