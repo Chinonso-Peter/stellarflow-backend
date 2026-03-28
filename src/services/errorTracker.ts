@@ -8,7 +8,6 @@ type FailureRecord = {
 export class ErrorTracker {
   private failureCounters = new Map<string, FailureRecord>();
   private readonly threshold = 3;
-
   /**
    * Track a failure for a specific service key.
    * Returns true when the configured threshold of consecutive failures is reached.
