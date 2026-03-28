@@ -20,7 +20,6 @@ export class ErrorTracker {
       existing.count += 1;
       existing.errors.push(errorDetails);
       this.failureCounters.set(serviceKey, existing);
-      // attempt non-blocking DB write
       this.logError(serviceKey, errorDetails);
       return existing.count >= this.threshold;
     }
