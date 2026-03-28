@@ -150,9 +150,9 @@ export class PriceReviewService {
     const normalizedRate = {
       ...rate,
       timestamp: normalizeDateToUTC(rate.timestamp),
-      comparisonTimestamp: rate.comparisonTimestamp
-        ? normalizeDateToUTC(rate.comparisonTimestamp)
-        : undefined,
+      ...(rate.comparisonTimestamp && {
+        comparisonTimestamp: normalizeDateToUTC(rate.comparisonTimestamp),
+      }),
     };
 
     const currency = normalizedRate.currency.toUpperCase();
@@ -221,20 +221,16 @@ export class PriceReviewService {
       throw new Error(`Failed to create price review record for ${currency}`);
     }
 
-    if (
-      reason !== undefined &&
-      comparisonRate !== undefined &&
-      changePercent !== undefined
-    ) {
+    if (reviewStatus === "PENDING") {
       await webhookService.sendManualReviewNotification({
         reviewId: inserted.id,
         currency,
-        rate: rate.rate,
-        previousRate: comparisonRate,
-        changePercent,
-        source: rate.source,
-        timestamp: rate.timestamp,
-        reason,
+        rate: normalizedRate.rate,
+        previousRate: comparisonRate!,
+        changePercent: changePercent!,
+        source: normalizedRate.source,
+        timestamp: normalizedRate.timestamp,
+        reason: reason!,
       });
     }
 
