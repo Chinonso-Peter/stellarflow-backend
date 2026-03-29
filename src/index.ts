@@ -1,5 +1,6 @@
 import express from "express";
 import { createServer } from "http";
+import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -72,6 +73,7 @@ const horizonServer = new Horizon.Server(horizonUrl);
 
 // Middleware
 app.use(morgan("dev"));
+app.use(compression());
 app.use(
   cors({
     origin: (origin, callback) => {
