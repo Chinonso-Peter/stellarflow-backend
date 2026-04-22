@@ -138,23 +138,6 @@ app.get(
 app.use(metricsMiddleware);
 app.get("/metrics", metricsEndpoint);
 
-// Apply Rate Limiting to all /api routes
-app.use("/api", rateLimitMiddleware);
-
-// Apply API Key Middleware to all /api routes
-app.use("/api", apiKeyMiddleware);
-// Apply API Key Middleware to all /api/v1 routes
-app.use("/api/v1", apiKeyMiddleware);
-
-// Routes
-app.use("/api/v1/market-rates", marketRatesRouter);
-app.use("/api/v1/history", historyRouter);
-app.use("/api/v1/stats", statsRouter);
-app.use("/api/v1/intelligence", intelligenceRouter);
-app.use("/api/v1/price-updates", priceUpdatesRouter);
-app.use("/api/v1/assets", assetsRouter);
-app.use("/api/v1/status", statusRouter);
-
 // Health check endpoint
 /**
  * @swagger
