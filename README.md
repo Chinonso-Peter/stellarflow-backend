@@ -6,6 +6,7 @@ TypeScript/Node.js backend for the StellarFlow oracle network. This service fetc
 
 - Express API with market-rate, history, stats, intelligence, asset, price update, and status routes
 - **Multi-level Redis caching (L1 in-memory + L2 Redis) for 10x performance improvement**
+- **Price Sanity Check System - Automatic comparison with external sources (2% deviation threshold)**
 - Market data fetchers for NGN, KES, GHS, and shared provider integrations
 - Synthetic cross-rates (Derived Assets) for calculating NGN/GHS and other pairs without direct APIs
 - Prisma/PostgreSQL persistence for price history, on-chain confirmations, provider reputation, and multi-signature workflows

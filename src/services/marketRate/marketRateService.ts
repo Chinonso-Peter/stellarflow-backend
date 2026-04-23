@@ -15,6 +15,7 @@ import { getRedisClient } from "../../lib/redis";
 import type { RedisClientType } from "redis";
 import dotenv from "dotenv";
 import { normalizeDateToUTC } from "../../utils/timeUtils";
+import { sanityCheckService } from "../sanityCheckService";
 
 dotenv.config();
 
@@ -164,6 +165,17 @@ export class MarketRateService {
       };
 
       if (!reviewAssessment.manualReviewRequired) {
+        // Perform sanity check before submitting to Stellar
+        try {
+          await sanityCheckService.checkPrice(normalizedCurrency, rate.rate);
+        } catch (sanityError) {
+          console.warn(
+            `Sanity check failed for ${normalizedCurrency}:`,
+            sanityError,
+          );
+          // Continue with submission even if sanity check fails
+        }
+
         try {
           const memoId = this.stellarService.generateMemoId(normalizedCurrency);
           if (this.multiSigEnabled) {
