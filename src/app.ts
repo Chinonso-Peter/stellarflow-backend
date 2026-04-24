@@ -94,7 +94,7 @@ app.use("/api", rateLimitMiddleware);
 app.use("/api", apiKeyMiddleware);
 app.use("/api/v1", apiKeyMiddleware);
 
-app.use("/api/admin", adminRouter);
+app.use("/api/admin", adminMiddleware, adminRouter);
 app.use("/api/v1/market-rates", marketRatesRouter);
 app.use("/api/v1/history", historyRouter);
 app.use("/api/v1/stats", statsRouter);
